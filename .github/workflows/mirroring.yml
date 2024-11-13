@@ -1,0 +1,17 @@
+name: Mirroring to GitLab
+run-name: ${{ github.actor }} is pushing to GitLab
+on:
+  push:
+    branches:
+      - main
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirroring
+        env:
+          GITLAB_TOKEN: ${{ secrets.glpat-aq2wPyL5YCKebUnyYspK }}
+        run: |
+          git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.example.com/paniash/mirror.git
+          git push -u gitlab --all
+          git push -u gitlab --tags
