@@ -1,17 +1,45 @@
-name: Mirroring to GitLab
-run-name: ${{ github.actor }} is pushing to GitLab
+# name: Mirroring to GitLab
+# run-name: ${{ github.actor }} is pushing to GitLab
+# on:
+#   push:
+#     branches:
+#       - main
+# jobs:
+#   mirror:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Mirroring
+#         env:
+#           GITLAB_TOKEN: ${{ secrets.glpat-aq2wPyL5YCKebUnyYspK }}
+#         run: |
+#           git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.example.com/paniash/mirror.git
+#           git push -u gitlab --all
+#           git push -u gitlab --tags
+
+name: Mirror to GitLab
+
 on:
   push:
     branches:
-      - main
+      - main  # Change this to your default branch if it's not 'main'
+
 jobs:
   mirror:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Mirroring
-        env:
-          GITLAB_TOKEN: ${{ secrets.glpat-aq2wPyL5YCKebUnyYspK }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Git
         run: |
-          git remote add gitlab https://oauth2:${GITLAB_TOKEN}@gitlab.example.com/paniash/mirror.git
-          git push -u gitlab --all
-          git push -u gitlab --tags
+          git config --global user.name "paniash"
+          git config --global user.email "public@ashishpanigrahi.com"
+
+      - name: Add GitLab remote
+        run: |
+          git remote add gitlab https://paniash:${{ secrets.GITLAB_TOKEN }}@gitlab.com/paniash/mirror.git
+
+      - name: Push to GitLab
+        run: |
+          git push --mirror gitlab
